@@ -1,28 +1,90 @@
-import React from "react";
-import PlaceList from "../../components/PlaceList";
+import { useState, useEffect } from "react";
+import supabase from "../../lib/supabase";
 
-const Places = () => {
+const PlacesPage = () => {
+  const [places, setPlaces] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+
+  useEffect(() => {
+    fetchPlaces();
+  }, []);
+
+  const fetchPlaces = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("places")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching places:", error.message);
+      } else {
+        setPlaces(data);
+      }
+    } catch (error) {
+      console.error("Error fetching places:", error.message);
+    }
+  };
+
+  const handleSearch = () => {
+    const results = places.filter(
+      (place) =>
+        place.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        place.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setSearchResults(results);
+  };
+
+  const handleChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
   return (
-    <div>
-      Welcome to the Housing App
-      <nav>
-        <ul className="flex">
-          <li className="mr-6">
-            <a className="text-blue-500 hover:text-blue-800" href="/">
-              Home
-            </a>
-          </li>
-          <li className="mr-6">
-            <a className="text-blue-500 hover:text-blue-800" href="/about">
-              About
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <h1>Places</h1>
-      <PlaceList />
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-4">Places Page</h1>
+
+      <div className="relative mb-4">
+        <input
+          type="text"
+          placeholder="Search for places..."
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          value={searchTerm}
+          onChange={handleChange}
+        />
+        <button
+          className="absolute right-0 top-0 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+          onClick={handleSearch}
+        >
+          Search
+        </button>
+      </div>
+
+      {searchResults.length > 0 ? (
+        <div>
+          <h2 className="text-xl font-bold mb-2">Search Results</h2>
+          {/* Render the search results */}
+          {searchResults.map((place) => (
+            <div key={place.id} className="mb-4">
+              <h3 className="text-lg font-bold">{place.title}</h3>
+              <p>{place.description}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div>
+          <h2 className="text-xl font-bold mb-2">All Places</h2>
+          {/* Render all places */}
+          {places.map((place) => (
+            <div key={place.id} className="mb-4">
+              <h3 className="text-lg font-bold">{place.title}</h3>
+              <p>{place.description}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-export default Places;
+export default PlacesPage;
