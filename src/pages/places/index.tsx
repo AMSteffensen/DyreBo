@@ -28,38 +28,95 @@ const PlacesPage = () => {
   };
 
   const handleSearch = () => {
-    const results = places.filter(
+    event.preventDefault();
+    setSearchResults([]);
+
+    if (searchTerm.trim() === "") {
+      return;
+    }
+
+    const filteredPlaces = places.filter(
       (place) =>
         place.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         place.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setSearchResults(results);
+
+    setSearchResults(filteredPlaces);
   };
 
   const handleChange = (event) => {
-    setSearchTerm(event.target.value);
+    const searchTerm = event.target.value;
+    setSearchTerm(searchTerm);
+
+    if (searchTerm.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    const filteredPlaces = places.filter(
+      (place) =>
+        place.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        place.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    setSearchResults(filteredPlaces);
+  };
+
+  const handleClear = () => {
+    setSearchTerm("");
+    setSearchResults([]);
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-4">Places Page</h1>
-
-      <div className="relative mb-4">
-        <input
-          type="text"
-          placeholder="Search for places..."
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          value={searchTerm}
-          onChange={handleChange}
-        />
-        <button
-          className="absolute right-0 top-0 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-          onClick={handleSearch}
-        >
-          Search
-        </button>
-      </div>
-
+      <form onSubmit={handleSearch}>
+        <div className="relative flex items-center">
+          <input
+            type="text"
+            className="w-full p-2 pl-8 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Search for places..."
+            value={searchTerm}
+            onChange={handleChange}
+          />
+          {searchTerm.length === 0 && (
+            <svg
+              className="absolute left-3 top-2.5 w-5 h-5 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 18l6-6m0 0l-6-6m6 6H4"
+              />
+            </svg>
+          )}
+          {searchTerm && (
+            <button
+              type="button"
+              className="flex items-center justify-center ml-2 p-2 rounded-full hover:bg-gray-300"
+              onClick={handleClear}
+            >
+              <svg
+                className="w-5 h-5 text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
+      </form>
       {searchResults.length > 0 ? (
         <div>
           <h2 className="text-xl font-bold mb-2">Search Results</h2>
