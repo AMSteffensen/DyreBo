@@ -1,34 +1,62 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# DyreBo (Pet housing app)
+
+This is a web application for pet and animal owners in search of housing, whether it's for travel or finding a new home for their pets. The app allows both animal owners and housing owners to register, list their pets or houses, and connect with potential matches.
+
+## Technologies Used
+
+- Next.js: A React framework for building server-side rendered and static websites.
+- Tailwind CSS: A utility-first CSS framework for building responsive and modern user interfaces.
+- Supabase: An open-source Firebase alternative that provides a backend-as-a-service (BaaS) platform with authentication, database, and storage functionalities.
+
+## Prerequisites
+
+Before running the project locally, make sure you have the following installed:
+
+- Node.js: v14 or higher
+- npm: v7 or higher
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
+``git clone https://github.com/amsteffensen/dyrebo.git``
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install the dependencies:
+``cd dyrebo
+npm install``
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+   - Create a `.env.local` file in the project root directory.
+   - Copy the contents of `.env.example` into `.env.local`.
+   - Update the values of the environment variables with your own configurations.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+4. Start the development server:
+``npm run dev``
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+5. Open your browser and visit `http://localhost:3000` to see the app.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Branching Strategy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+We follow the Gitflow branching strategy for this project. Here's an overview of the main branches:
 
-## Deploy on Vercel
+- `main`: Represents the production-ready code.
+- `dev`: Represents the main development branch where features are integrated for testing.
+- `feature/*`: Feature branches for developing specific features. Branch off from `dev` and merge back into `dev`.
+- `hotfix/*`: Branches for fixing critical bugs in the production code. Branch off from `main` and merge back into both `main` and `dev`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project Management
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+We use Trello as our project management tool. You can find the project board [here](https://trello.com/b/SkJKmT09/dyrebo). The board is organized into Backlog, To-Do, In Progress, and Done columns to track the progress of tasks.
+
+## Contributing
+
+Thank you for considering contributing to the Pet Housing App! If you're interested in contributing, please follow these guidelines:
+- Fork the repository and create your branch from `dev`.
+- Make sure your code follows the established coding style and conventions.
+- Open a pull request, describe your changes, and provide any necessary context or screenshots.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
