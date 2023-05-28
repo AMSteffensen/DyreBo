@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import supabase from "../../lib/supabase";
+import PlaceCard from "@/components/PlaceCard";
 
 const PlacesPage = () => {
   const [places, setPlaces] = useState([]);
@@ -95,10 +96,7 @@ const PlacesPage = () => {
         <div>
           {/* <h2 className="text-xl font-bold mb-2">Search Results</h2> */}
           {searchResults.map((place) => (
-            <div key={place.id} className="mb-4">
-              <h3 className="text-lg font-bold">{place.title}</h3>
-              <p>{place.description}</p>
-            </div>
+            <PlaceCard key={place.id} place={place} />
           ))}
         </div>
       );
@@ -111,10 +109,7 @@ const PlacesPage = () => {
         <div>
           {/* <h2 className="text-xl font-bold mb-2">Search Results</h2> */}
           {filteredPlaces.map((place) => (
-            <div key={place.id} className="mb-4">
-              <h3 className="text-lg font-bold">{place.title}</h3>
-              <p>{place.description}</p>
-            </div>
+            <PlaceCard key={place.id} place={place} />
           ))}
         </div>
       );
@@ -123,10 +118,7 @@ const PlacesPage = () => {
         <div>
           <h2 className="text-xl font-bold mb-2">All Places</h2>
           {places.map((place) => (
-            <div key={place.id} className="mb-4">
-              <h3 className="text-lg font-bold">{place.title}</h3>
-              <p>{place.description}</p>
-            </div>
+            <PlaceCard key={place.id} place={place} />
           ))}
         </div>
       );
