@@ -18,6 +18,7 @@ const Layout = ({ children }) => {
               supabaseClient={supabase}
               appearance={{ theme: ThemeSupa }}
               theme="dark"
+              providers={[]}
             />
           </div>
         </div>

@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
 import supabase from "../../lib/supabase";
+import PlaceCard from "@/components/PlaceCard";
 
 const PlacesPage = () => {
   const [places, setPlaces] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState(null);
 
   useEffect(() => {
     fetchPlaces();
+    fetchCategories();
   }, []);
 
   const fetchPlaces = async () => {
@@ -27,50 +32,108 @@ const PlacesPage = () => {
     }
   };
 
-  const handleSearch = () => {
-    event.preventDefault();
-    setSearchResults([]);
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase.from("categories").select("*");
 
-    if (searchTerm.trim() === "") {
-      return;
+      if (error) {
+        console.error("Error fetching categories:", error.message);
+      } else {
+        setCategories(data);
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error.message);
     }
 
-    const filteredPlaces = places.filter(
-      (place) =>
-        place.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        place.description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    console.log(categories);
+  };
+
+  const handleSearch = () => {
+    const filteredPlaces = places.filter((place) => {
+      const titleMatch = place.title
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const descriptionMatch = place.description
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const categoryMatch = selectedCategory
+        ? place.category_id === selectedCategory
+        : true;
+
+      return titleMatch || (descriptionMatch && categoryMatch);
+    });
 
     setSearchResults(filteredPlaces);
+  };
+
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category.id);
+    console.log(category.name);
+    setSelectedCategoryName(category.name);
   };
 
   const handleChange = (event) => {
-    const searchTerm = event.target.value;
-    setSearchTerm(searchTerm);
-
-    if (searchTerm.trim() === "") {
-      setSearchResults([]);
-      return;
-    }
-
-    const filteredPlaces = places.filter(
-      (place) =>
-        place.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        place.description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    setSearchResults(filteredPlaces);
+    setSearchTerm(event.target.value);
   };
 
-  const handleClear = () => {
-    setSearchTerm("");
-    setSearchResults([]);
+  const renderCategories = () => {
+    return categories.map((category) => (
+      <button
+        key={category.id}
+        className={`px-4 py-2 text-white rounded-lg shadow-md focus:outline-none mb-2 mr-2 ${
+          selectedCategory === category.id ? "bg-blue-500" : "bg-gray-500"
+        }`}
+        onClick={() => handleCategoryClick(category)}
+      >
+        {category.name}
+      </button>
+    ));
+  };
+
+  const renderSearchResults = () => {
+    if (searchResults.length > 0) {
+      return (
+        <div>
+          {/* <h2 className="text-xl font-bold mb-2">Search Results</h2> */}
+          {searchResults.map((place) => (
+            <PlaceCard key={place.id} place={place} />
+          ))}
+        </div>
+      );
+    } else if (selectedCategory !== null) {
+      const filteredPlaces = places.filter(
+        (place) => place.category_id === selectedCategory
+      );
+
+      return (
+        <div>
+          {/* <h2 className="text-xl font-bold mb-2">Search Results</h2> */}
+          {filteredPlaces.map((place) => (
+            <PlaceCard key={place.id} place={place} />
+          ))}
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <h2 className="text-xl font-bold mb-2">All Places</h2>
+          {places.map((place) => (
+            <PlaceCard key={place.id} place={place} />
+          ))}
+        </div>
+      );
+    }
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Places Page</h1>
-      <form onSubmit={handleSearch}>
+      <h1 className="text-3xl font-bold mb-4">Search for places</h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearch();
+        }}
+      >
         <div className="relative flex items-center">
           <input
             type="text"
@@ -79,26 +142,11 @@ const PlacesPage = () => {
             value={searchTerm}
             onChange={handleChange}
           />
-          {searchTerm.length === 0 && (
-            <svg
-              className="absolute left-3 top-2.5 w-5 h-5 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 18l6-6m0 0l-6-6m6 6H4"
-              />
-            </svg>
-          )}
-          {searchTerm && (
+          {searchTerm.length > 0 && (
             <button
               type="button"
               className="flex items-center justify-center ml-2 p-2 rounded-full hover:bg-gray-300"
-              onClick={handleClear}
+              onClick={() => setSearchTerm("")}
             >
               <svg
                 className="w-5 h-5 text-gray-500"
@@ -117,29 +165,17 @@ const PlacesPage = () => {
           )}
         </div>
       </form>
-      {searchResults.length > 0 ? (
-        <div>
-          <h2 className="text-xl font-bold mb-2">Search Results</h2>
-          {/* Render the search results */}
-          {searchResults.map((place) => (
-            <div key={place.id} className="mb-4">
-              <h3 className="text-lg font-bold">{place.title}</h3>
-              <p>{place.description}</p>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div>
-          <h2 className="text-xl font-bold mb-2">All Places</h2>
-          {/* Render all places */}
-          {places.map((place) => (
-            <div key={place.id} className="mb-4">
-              <h3 className="text-lg font-bold">{place.title}</h3>
-              <p>{place.description}</p>
-            </div>
-          ))}
-        </div>
-      )}
+
+      <div>
+        {/* <h2 className="text-xl font-bold mb-2">Categories</h2> */}
+        <div className="flex flex-wrap mb-4 pb-4">{renderCategories()}</div>
+      </div>
+
+      <div>
+        <h2 className="text-xl font-bold mb-2">{selectedCategoryName}</h2>
+
+        {renderSearchResults()}
+      </div>
     </div>
   );
 };
