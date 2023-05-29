@@ -1,7 +1,18 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-const PlaceCard = ({ place }) => {
+interface Place {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+}
+
+interface PlaceCardProps {
+  place: Place;
+}
+
+const PlaceCard = ({ place }: PlaceCardProps) => {
   const router = useRouter();
 
   const handleClick = () => {

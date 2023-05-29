@@ -36,9 +36,11 @@ const Header = () => {
         </div>
         {session ? (
           <div>
-            <Link href="/account">
-              <div className="text-white mr-4">{user.email}</div>
-            </Link>
+            {user?.email && (
+              <Link href="/">
+                <div className="text-white mr-4">{user.email}</div>
+              </Link>
+            )}
             <Link href="/add">
               <div className="text-white mr-4">Add new listing</div>
             </Link>

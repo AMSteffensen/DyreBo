@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 
-export default function ListingsTable({ user, supabase }) {
-  const [listings, setListings] = useState([]);
+type ListingsTableProps = {
+  user: any;
+  supabase: any;
+};
+
+export default function ListingsTable({ user, supabase }: ListingsTableProps) {
+  const [listings, setListings] = useState<any[]>([]);
 
   useEffect(() => {
     fetchListings();
@@ -15,16 +20,19 @@ export default function ListingsTable({ user, supabase }) {
         .match({ user_id: user.id });
       setListings(data || []);
     } catch (error) {
+      // @ts-ignore
       console.error("Error fetching listings:", error.message);
+      // @ts-ignore
     }
   };
 
-  const handleDelete = async (listingId) => {
+  const handleDelete = async (listingId: string) => {
     try {
       await supabase.from("listings").delete().match({ id: listingId });
       fetchListings();
       alert("Listing deleted successfully!");
     } catch (error) {
+      // @ts-ignore
       console.error("Error deleting listing:", error.message);
     }
   };
