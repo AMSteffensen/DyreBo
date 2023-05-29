@@ -17,7 +17,7 @@ const Header = () => {
       <nav className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <Link href="/places">
-            <div className="text-white flex items-center">
+            <div className="flex items-center text-white">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -26,11 +26,11 @@ const Header = () => {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="feather feather-home w-6 h-6 mr-2"
+                className="feather feather-home mr-2 h-6 w-6"
               >
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9zm9-2v9h4V7h5l-9-7-9 7h5z" />
               </svg>
-              <p className="font-semibold text-lg">Places</p>
+              <p className="text-lg font-semibold">Places</p>
             </div>
           </Link>
         </div>
@@ -38,11 +38,11 @@ const Header = () => {
           <div>
             {user?.email && (
               <Link href="/">
-                <div className="text-white mr-4">{user.email}</div>
+                <div className="mr-4 text-white">{user.email}</div>
               </Link>
             )}
             <Link href="/add">
-              <div className="text-white mr-4">Add new listing</div>
+              <div className="mr-4 text-white">Add new listing</div>
             </Link>
             <button onClick={() => supabase.auth.signOut()}>
               <p className="text-white">Sign Out</p>

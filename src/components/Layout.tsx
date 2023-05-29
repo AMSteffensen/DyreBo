@@ -13,11 +13,11 @@ const Layout = ({ children }: LayoutProps) => {
   const supabase = useSupabaseClient();
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <Header />
       {!session ? (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-md w-full space-y-8">
+        <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+          <div className="w-full max-w-md space-y-8">
             <Auth
               supabaseClient={supabase}
               appearance={{ theme: ThemeSupa }}
@@ -28,7 +28,7 @@ const Layout = ({ children }: LayoutProps) => {
         </div>
       ) : (
         <div>
-          <main className="flex-grow">{children}</main>
+          <main className="grow">{children}</main>
         </div>
       )}
     </div>

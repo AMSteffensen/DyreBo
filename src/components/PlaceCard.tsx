@@ -41,7 +41,7 @@ const PlaceCard = ({ place }: PlaceCardProps) => {
         <p>{place.description}</p>
         <p className="mt-2">{place.price} KR NOK</p>
         <button
-          className="px-4 py-2 mt-2 text-white bg-blue-500 rounded-lg shadow-md focus:outline-none"
+          className="mt-2 rounded-lg bg-blue-500 px-4 py-2 text-white shadow-md focus:outline-none"
           onClick={handleClick}
         >
           View Details
