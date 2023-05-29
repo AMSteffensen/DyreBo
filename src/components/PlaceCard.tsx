@@ -28,7 +28,7 @@ const PlaceCard = ({ place }) => {
         />
         <h3 className="text-lg font-bold">{place.title}</h3>
         <p>{place.description}</p>
-        <p className="mt-2">Price: {place.price}</p>
+        <p className="mt-2">{place.price} KR NOK</p>
         <button
           className="px-4 py-2 mt-2 text-white bg-blue-500 rounded-lg shadow-md focus:outline-none"
           onClick={handleClick}

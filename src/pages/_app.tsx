@@ -5,7 +5,11 @@ import "../styles/globals.css";
 import Layout from "@/components/Layout";
 
 function MyApp({ Component, pageProps }) {
-  const [supabase] = useState(() => createBrowserSupabaseClient());
+  const [supabase] = useState(() =>
+    createBrowserSupabaseClient({
+      providers: ["email"],
+    })
+  );
 
   return (
     <SessionContextProvider
