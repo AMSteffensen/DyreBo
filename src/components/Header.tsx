@@ -44,6 +44,9 @@ const Header = () => {
             <Link href="/add">
               <div className="mr-4 text-white">Add new listing</div>
             </Link>
+            <Link href="/bookings">
+              <div className="mr-4 text-white">See bookings</div>
+            </Link>
             <button onClick={() => supabase.auth.signOut()}>
               <p className="text-white">Sign Out</p>
             </button>
