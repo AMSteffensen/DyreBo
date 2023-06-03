@@ -8,42 +8,43 @@ const PlaceDetailPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const [places, setPlaces] = useState<Place[]>([]);
-  const [selectedImage, setSelectedImage] = useState<string[] | null>(null);
-
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [bookingData, setBookingData] = useState({
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [bookingData, setBookingData] = useState<BookingData>({
     start_date: "",
     end_date: "",
     message: "",
   });
 
-  useEffect(() => {
-    const fetchPlace = async () => {
-      try {
-        const { data, error }: { data: any; error: any } = await supabase
-          .from("places")
-          .select("*")
-          .eq("id", id)
-          .single();
-        if (error) {
-          console.error("Error fetching place:", error.message);
-        } else {
-          setPlaces([data]);
-          if (!selectedImage && data.images && data.images.length > 0) {
-            setSelectedImage(data.images[0]);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching place:", error);
-      }
-    };
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
+  const fetchPlace = async () => {
+    try {
+      const { data, error }: { data: Place | null; error: any } = await supabase
+        .from("places")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (data) {
+        setPlaces([data]);
+        if (!selectedImage && data.images && data.images.length > 0) {
+          setSelectedImage(data.images[0]);
+        }
+      } else {
+        console.error("Error fetching place:", error.message);
+      }
+    } catch (error) {
+      console.error("Error fetching place:", error);
+    }
+  };
+
+  useEffect(() => {
     if (id) {
       fetchPlace();
     }
   }, [id, selectedImage]);
 
-  const handleThumbnailClick = (image: string[]) => {
+  const handleThumbnailClick = (image: string) => {
     setSelectedImage(image);
   };
 
@@ -56,7 +57,7 @@ const PlaceDetailPage = () => {
   };
 
   const handleViewImageButtonClick = () => {
-    // Add your logic here
+    setSelectedImage(places[0]?.images[0] || null);
   };
 
   const handleBookingSubmit = async (bookingData: BookingData) => {
@@ -95,16 +96,14 @@ const PlaceDetailPage = () => {
           {selectedImage && (
             <img
               className="h-64 w-full object-cover"
-              src={
-                Array.isArray(selectedImage) ? selectedImage[0] : selectedImage
-              }
+              src={selectedImage}
               alt={place.title}
             />
           )}
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <button
               className="font-semibold text-white"
-              onClick={() => handleViewImageButtonClick()}
+              onClick={handleViewImageButtonClick}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   handleViewImageButtonClick();
@@ -131,11 +130,9 @@ const PlaceDetailPage = () => {
               <div
                 key={index}
                 className={`h-16 w-16 cursor-pointer object-cover ${
-                  selectedImage && selectedImage.includes(image)
-                    ? "ring-2 ring-blue-500"
-                    : ""
+                  selectedImage === image ? "ring-2 ring-blue-500" : ""
                 }`}
-                onClick={() => handleThumbnailClick([image])}
+                onClick={() => handleThumbnailClick(image)}
               >
                 <img
                   className="h-full w-full"

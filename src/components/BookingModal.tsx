@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
-import { BookingData, BookingModalProps } from "../types";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import { DateRangePicker } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
+import { BookingModalProps, BookingData } from "../types";
 
 const BookingModal: React.FC<BookingModalProps> = ({ onClose, onSubmit }) => {
   const [bookingData, setBookingData] = useState<BookingData>({
@@ -10,18 +11,23 @@ const BookingModal: React.FC<BookingModalProps> = ({ onClose, onSubmit }) => {
     end_date: "",
     message: "",
   });
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (bookingData.start_date && bookingData.end_date) {
-      if (bookingData.start_date <= bookingData.end_date) {
-        onSubmit(bookingData);
-      } else {
-        setErrorMessage("Invalid date range. Please select a valid range.");
-      }
-    } else {
-      setErrorMessage("Please select a date range.");
+    try {
+      const booking: BookingData = {
+        start_date:
+          bookingData.start_date instanceof Date
+            ? bookingData.start_date
+            : null,
+        end_date:
+          bookingData.end_date instanceof Date ? bookingData.end_date : null,
+        message: bookingData.message,
+      };
+
+      onSubmit(booking);
+    } catch (error) {
+      console.error("Error submitting booking:", error);
     }
   };
 
@@ -29,55 +35,59 @@ const BookingModal: React.FC<BookingModalProps> = ({ onClose, onSubmit }) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="rounded-lg bg-white p-8">
         <h2 className="mb-4 text-xl font-bold">Book Now</h2>
-        <form onSubmit={handleFormSubmit}>
+        <form onSubmit={handleBookingSubmit}>
           <div className="mb-4">
-            <label htmlFor="dateRange" className="mb-2 block text-gray-700">
+            <label htmlFor="dateRange" className="block font-semibold">
               Date Range
             </label>
-            <DatePicker
-              id="dateRange"
-              className="w-full rounded-md border border-gray-300 px-4 py-2"
-              selected={bookingData.start_date}
-              startDate={bookingData.start_date}
-              endDate={bookingData.end_date}
-              onChange={(dates: [Date, Date]) => {
+            <DateRangePicker
+              editableDateInputs={true}
+              moveRangeOnFirstSelection={false}
+              onChange={(range) =>
                 setBookingData({
                   ...bookingData,
-                  start_date: dates[0],
-                  end_date: dates[1],
-                });
-                setErrorMessage(null);
-              }}
-              selectsRange
-              inline
-              dateFormat="yyyy-MM-dd"
+                  start_date: range.selection.startDate || null,
+                  end_date: range.selection.endDate || null,
+                })
+              }
+              ranges={[
+                {
+                  startDate: bookingData.start_date
+                    ? new Date(bookingData.start_date)
+                    : undefined,
+                  endDate: bookingData.end_date
+                    ? new Date(bookingData.end_date)
+                    : undefined,
+                  key: "selection",
+                },
+              ]}
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="message" className="mb-2 block text-gray-700">
+            <label htmlFor="message" className="block font-semibold">
               Message
             </label>
             <textarea
               id="message"
               className="w-full rounded-md border border-gray-300 px-4 py-2"
+              rows={4}
               value={bookingData.message}
               onChange={(e) =>
                 setBookingData({ ...bookingData, message: e.target.value })
               }
             />
           </div>
-          {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
           <div className="flex justify-end">
             <button
               type="button"
-              className="mr-4 text-gray-600"
+              className="px-4 py-2 text-gray-600 hover:text-gray-800"
               onClick={onClose}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600"
+              className="px-4 py-2 ml-4 bg-blue-500 text-white font-semibold hover:bg-blue-600"
             >
               Submit
             </button>
