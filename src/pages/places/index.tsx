@@ -1,14 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import supabase from "../../lib/supabase";
 import PlaceCard from "@/components/PlaceCard";
+import { Category, Place } from "@/types";
 
 const PlacesPage = () => {
-  const [places, setPlaces] = useState([]);
+  const [places, setPlaces] = useState<Place[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedCategoryName, setSelectedCategoryName] = useState(null);
+  const [searchResults, setSearchResults] = useState<Place[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<
+    string | null
+  >(null);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     fetchPlaces();
@@ -25,10 +28,15 @@ const PlacesPage = () => {
       if (error) {
         console.error("Error fetching places:", error.message);
       } else {
-        setPlaces(data);
+        if (Array.isArray(data)) {
+          const placesData = data as Place[]; // Explicitly cast data to Place[]
+          setPlaces(placesData);
+        } else {
+          console.error("Invalid data format for places:", data);
+        }
       }
     } catch (error) {
-      console.error("Error fetching places:", error.message);
+      console.error("Error fetching places:", error);
     }
   };
 
@@ -37,15 +45,13 @@ const PlacesPage = () => {
       const { data, error } = await supabase.from("categories").select("*");
 
       if (error) {
-        console.error("Error fetching categories:", error.message);
+        console.error("Error fetching categories:", error);
       } else {
-        setCategories(data);
+        setCategories((data as Category[]) || []);
       }
     } catch (error) {
-      console.error("Error fetching categories:", error.message);
+      console.error("Error fetching categories:", error);
     }
-
-    console.log(categories);
   };
 
   const handleSearch = () => {
@@ -66,13 +72,12 @@ const PlacesPage = () => {
     setSearchResults(filteredPlaces);
   };
 
-  const handleCategoryClick = (category) => {
+  const handleCategoryClick = (category: Category) => {
     setSelectedCategory(category.id);
-    console.log(category.name);
     setSelectedCategoryName(category.name);
   };
 
-  const handleChange = (event) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
@@ -94,7 +99,6 @@ const PlacesPage = () => {
     if (searchResults.length > 0) {
       return (
         <div>
-          {/* <h2 className="text-xl font-bold mb-2">Search Results</h2> */}
           {searchResults.map((place) => (
             <PlaceCard key={place.id} place={place} />
           ))}
@@ -107,7 +111,6 @@ const PlacesPage = () => {
 
       return (
         <div>
-          {/* <h2 className="text-xl font-bold mb-2">Search Results</h2> */}
           {filteredPlaces.map((place) => (
             <PlaceCard key={place.id} place={place} />
           ))}
@@ -167,13 +170,11 @@ const PlacesPage = () => {
       </form>
 
       <div>
-        {/* <h2 className="text-xl font-bold mb-2">Categories</h2> */}
         <div className="mb-4 flex flex-wrap pb-4">{renderCategories()}</div>
       </div>
 
       <div>
         <h2 className="mb-2 text-xl font-bold">{selectedCategoryName}</h2>
-
         {renderSearchResults()}
       </div>
     </div>

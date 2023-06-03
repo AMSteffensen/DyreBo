@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import supabase from "./supabase";
+import PropTypes from "prop-types";
 
 export const AuthContext = createContext();
 
@@ -20,6 +21,10 @@ export const AuthProvider = ({ children }) => {
       authListener.unsubscribe();
     };
   }, []);
+
+  AuthProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+  };
 
   return (
     <AuthContext.Provider value={{ user, supabase }}>

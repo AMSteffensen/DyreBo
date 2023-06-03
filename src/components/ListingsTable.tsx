@@ -20,9 +20,7 @@ export default function ListingsTable({ user, supabase }: ListingsTableProps) {
         .match({ user_id: user.id });
       setListings(data || []);
     } catch (error) {
-      // @ts-ignore
-      console.error("Error fetching listings:", error.message);
-      // @ts-ignore
+      console.error("Error fetching listings:", error);
     }
   };
 
@@ -32,8 +30,7 @@ export default function ListingsTable({ user, supabase }: ListingsTableProps) {
       fetchListings();
       alert("Listing deleted successfully!");
     } catch (error) {
-      // @ts-ignore
-      console.error("Error deleting listing:", error.message);
+      console.error("Error deleting listing:", error);
     }
   };
 

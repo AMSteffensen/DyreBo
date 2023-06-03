@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -29,6 +30,7 @@ const PlaceCard = ({ place }: PlaceCardProps) => {
   }, []);
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div key={place.id} className="mb-4" onClick={handleClick}>
       <div className="flex flex-col">
         <img

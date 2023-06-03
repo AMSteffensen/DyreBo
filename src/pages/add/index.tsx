@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useRouter } from "next/router";
 import supabase from "../../lib/supabase";
 
@@ -6,7 +5,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 
 function generateUUID() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    var r = (Math.random() * 16) | 0,
+    const r = (Math.random() * 16) | 0,
       v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
@@ -33,7 +32,7 @@ const AddPlaceForm = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Add New Place</h1>
+      <h1 className="mb-4 text-2xl font-bold">Add New Place</h1>
       <Formik
         initialValues={{
           id: generateUUID(),
@@ -73,7 +72,7 @@ const AddPlaceForm = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
             >
               Add Place
             </button>
@@ -101,9 +100,9 @@ const FormField = ({
       type={type}
       id={name}
       name={name}
-      className="border border-gray-300 px-3 py-2 mt-1 rounded w-full"
+      className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
     />
-    <ErrorMessage name={name} component="div" className="text-red-500 mt-1" />
+    <ErrorMessage name={name} component="div" className="mt-1 text-red-500" />
   </div>
 );
 
