@@ -4,10 +4,22 @@ import { useState } from "react";
 import "../styles/globals.css";
 import Layout from "@/components/Layout";
 
-function MyApp({ Component, pageProps }) {
+type MyAppProps = {
+  Component: React.ComponentType<any>;
+  pageProps: any;
+};
+
+function MyApp({ Component, pageProps }: MyAppProps) {
   const [supabase] = useState(() =>
     createBrowserSupabaseClient({
-      providers: ["email"],
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+      supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      // options: {
+      //   // Additional options for the Supabase client
+      // },
+      // cookieOptions: {
+      //   // Additional options for the cookie
+      // },
     })
   );
 

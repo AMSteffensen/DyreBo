@@ -1,19 +1,23 @@
-import { useEffect } from "react";
+import { ReactNode } from "react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import Header from "./Header";
 
-const Layout = ({ children }) => {
+type LayoutProps = {
+  children: ReactNode;
+};
+
+const Layout = ({ children }: LayoutProps) => {
   const session = useSession();
   const supabase = useSupabaseClient();
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <Header />
       {!session ? (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-md w-full space-y-8">
+        <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+          <div className="w-full max-w-md space-y-8">
             <Auth
               supabaseClient={supabase}
               appearance={{ theme: ThemeSupa }}
@@ -24,7 +28,7 @@ const Layout = ({ children }) => {
         </div>
       ) : (
         <div>
-          <main className="flex-grow">{children}</main>
+          <main className="grow">{children}</main>
         </div>
       )}
     </div>

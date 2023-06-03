@@ -1,6 +1,15 @@
 import { useState } from "react";
 
-export default function ProfileForm({ user, supabase }) {
+type ProfileFormProps = {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  supabase: any; // Replace 'any' with the appropriate type for Supabase
+};
+
+export default function ProfileForm({ user, supabase }: ProfileFormProps) {
   const [name, setName] = useState(user.name || "");
   const [email, setEmail] = useState(user.email || "");
 
@@ -11,7 +20,7 @@ export default function ProfileForm({ user, supabase }) {
         .update({ name, email })
         .match({ id: user.id });
       alert("Profile saved successfully!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving profile:", error.message);
     }
   };

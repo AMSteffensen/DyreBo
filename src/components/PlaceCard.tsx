@@ -1,7 +1,19 @@
+/* eslint-disable @next/next/no-img-element */
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-const PlaceCard = ({ place }) => {
+interface Place {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+}
+
+interface PlaceCardProps {
+  place: Place;
+}
+
+const PlaceCard = ({ place }: PlaceCardProps) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -18,6 +30,7 @@ const PlaceCard = ({ place }) => {
   }, []);
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div key={place.id} className="mb-4" onClick={handleClick}>
       <div className="flex flex-col">
         <img
@@ -30,7 +43,7 @@ const PlaceCard = ({ place }) => {
         <p>{place.description}</p>
         <p className="mt-2">{place.price} KR NOK</p>
         <button
-          className="px-4 py-2 mt-2 text-white bg-blue-500 rounded-lg shadow-md focus:outline-none"
+          className="mt-2 rounded-lg bg-blue-500 px-4 py-2 text-white shadow-md focus:outline-none"
           onClick={handleClick}
         >
           View Details
