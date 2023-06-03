@@ -22,13 +22,21 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  AuthProvider.propTypes = {
-    children: PropTypes.node.isRequired,
-  };
-
   return (
     <AuthContext.Provider value={{ user, supabase }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+export const useAuth = () => {
+  const auth = useContext(AuthContext);
+  if (!auth) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return auth;
 };

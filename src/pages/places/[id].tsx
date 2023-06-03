@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import supabase from "../../lib/supabase";
 import BookingModal from "@/components/BookingModal";
-import { Place } from "../../types";
+import { Place, BookingData } from "../../types";
 
 const PlaceDetailPage = () => {
   const router = useRouter();
@@ -12,9 +12,8 @@ const PlaceDetailPage = () => {
 
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [bookingData, setBookingData] = useState({
-    name: "",
-    email: "",
-    date: "",
+    start_date: "",
+    end_date: "",
     message: "",
   });
 
@@ -60,16 +59,23 @@ const PlaceDetailPage = () => {
     // Add your logic here
   };
 
-  const handleBookingSubmit = () => {
-    // Perform your booking submission logic here
-    console.log(bookingData);
-    // Clear the form
-    setBookingData({
-      name: "",
-      email: "",
-      date: "",
-      message: "",
-    });
+  const handleBookingSubmit = async (bookingData: BookingData) => {
+    try {
+      // Make the booking submission to the database
+      const { data, error } = await supabase
+        .from("bookings")
+        .insert([{ ...bookingData }])
+        .single();
+
+      if (error) {
+        console.error("Error submitting booking:", error.message);
+      } else {
+        console.log("Booking submitted successfully:", data);
+      }
+    } catch (error) {
+      console.error("Error submitting booking:", error);
+    }
+
     // Close the modal
     closeBookingModal();
   };

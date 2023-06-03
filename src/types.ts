@@ -1,9 +1,8 @@
 //import { BookingData, Place, BookingModalProps, SetPlaceAction, CustomError } from "./types";
 
 export type BookingData = {
-    name: string;
-    email: string;
-    date: string;
+    start_date: string;
+    end_date: string;
     message: string;
   };
   
