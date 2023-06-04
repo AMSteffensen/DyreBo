@@ -4,6 +4,7 @@ export type BookingData = {
   start_date: string | Date | null;
   end_date: string | Date | null;
   message: string;
+  id: string | null;
 };
   
   

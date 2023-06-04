@@ -5,9 +5,11 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import styles from "./BookingModal.module.css";
 import { BookingModalProps, BookingData } from "../types";
+import { v4 as uuidv4 } from "uuid";
 
 const BookingModal: React.FC<BookingModalProps> = ({ onClose, onSubmit }) => {
   const [bookingData, setBookingData] = useState<BookingData>({
+    id: "null",
     start_date: "",
     end_date: "",
     message: "",
@@ -17,6 +19,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ onClose, onSubmit }) => {
     e.preventDefault();
     try {
       const booking: BookingData = {
+        id: uuidv4(),
         start_date:
           bookingData.start_date instanceof Date
             ? bookingData.start_date
@@ -25,7 +28,6 @@ const BookingModal: React.FC<BookingModalProps> = ({ onClose, onSubmit }) => {
           bookingData.end_date instanceof Date ? bookingData.end_date : null,
         message: bookingData.message,
       };
-
       onSubmit(booking);
     } catch (error) {
       console.error("Error submitting booking:", error);

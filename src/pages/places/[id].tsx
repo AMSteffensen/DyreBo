@@ -10,10 +10,12 @@ const PlaceDetailPage = () => {
   const [places, setPlaces] = useState<Place[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [bookingData, setBookingData] = useState<BookingData>({
+    id: "",
     start_date: "",
     end_date: "",
     message: "",
   });
+
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<string[]>([]);
 
@@ -137,7 +139,7 @@ const PlaceDetailPage = () => {
         <div className="flex flex-wrap gap-4">
           {places.length > 0 &&
             places[0].images.map((image, index) => (
-              <div
+              <button
                 key={index}
                 className={`h-16 w-16 cursor-pointer object-cover ${
                   selectedImage === image ? "ring-2 ring-blue-500" : ""
@@ -149,7 +151,7 @@ const PlaceDetailPage = () => {
                   src={image}
                   alt={`Thumbnail ${index + 1}`}
                 />
-              </div>
+              </button>
             ))}
         </div>
       </div>

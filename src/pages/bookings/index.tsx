@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import supabase from "../../lib/supabase";
 import { BookingData } from "../../types";
 
-const BookingsPage = () => {
+interface ComponentWithChildren {
+  children: JSX.Element | JSX.Element[];
+}
+
+const BookingsPage: React.FC<ComponentWithChildren> = () => {
   const [bookings, setBookings] = useState<BookingData[]>([]);
 
   const fetchBookings = async () => {
@@ -10,7 +14,7 @@ const BookingsPage = () => {
       const { data, error } = await supabase.from("bookings").select("*");
 
       if (data) {
-        setBookings(data);
+        setBookings(data as BookingData[]);
       } else {
         console.error("Error fetching bookings:", error?.message);
       }
@@ -33,8 +37,13 @@ const BookingsPage = () => {
       <ul>
         {bookings.map((booking) => (
           <li key={booking.id}>
-            <p>Start Date: {booking.start_date}</p>
-            <p>End Date: {booking.end_date}</p>
+            <p>
+              Start Date:{" "}
+              {booking.start_date ? booking.start_date.toString() : "N/A"}
+            </p>
+            <p>
+              End Date: {booking.end_date ? booking.end_date.toString() : "N/A"}
+            </p>
             <p>Message: {booking.message}</p>
             <hr />
           </li>
