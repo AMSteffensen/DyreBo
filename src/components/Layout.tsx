@@ -27,9 +27,7 @@ const Layout = ({ children }: LayoutProps) => {
           </div>
         </div>
       ) : (
-        <div>
-          <main className="grow">{children}</main>
-        </div>
+        <main className="grow mx-4 my-2">{children}</main>
       )}
     </div>
   );

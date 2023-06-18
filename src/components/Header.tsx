@@ -1,23 +1,28 @@
+import { useState } from "react";
 import {
   useSession,
   useUser,
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { FiMenu, FiX, FiHome, FiLogOut, FiTool, FiBook } from "react-icons/fi";
 
 const Header = () => {
-  const session = useSession();
   const supabase = useSupabaseClient();
-  const user = useUser();
-  const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const session = useSession();
 
   return (
-    <header className="bg-gray-800 py-4">
+    <header className="bg-gray-800 ">
       <nav className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <Link href="/places">
-            <div className="flex items-center text-white">
+            <div className="flex items-center text-white m-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -34,26 +39,68 @@ const Header = () => {
             </div>
           </Link>
         </div>
-        {session ? (
-          <div>
-            {user?.email && (
-              <Link href="/">
-                <div className="mr-4 text-white">{user.email}</div>
-              </Link>
+        {/* Hamburger Icon */}
+        {session && (
+          <div className="flex items-center text-white">
+            {isMenuOpen ? (
+              <FiX
+                className="w-6 h-6 text-white cursor-pointer ml-auto mr-4"
+                onClick={toggleMenu}
+              />
+            ) : (
+              <FiMenu
+                className="w-6 h-6 text-white cursor-pointer ml-auto mr-4"
+                onClick={toggleMenu}
+              />
             )}
-            <Link href="/add">
-              <div className="mr-4 text-white">Add new listing</div>
-            </Link>
-            <button onClick={() => supabase.auth.signOut()}>
-              <p className="text-white">Sign Out</p>
-            </button>
           </div>
-        ) : (
-          <button onClick={() => router.push("/signin")}>
-            <p className="text-white">Sign In</p>
-          </button>
         )}
       </nav>
+      {/* Menu */}
+      {isMenuOpen && (
+        <div
+          className={`bg-gray-800 text-white py-4 ${
+            isMenuOpen ? "w-full" : "hidden"
+          }`}
+        >
+          <div className="container mx-auto flex flex-col items-center">
+            <Link href="/">
+              <button
+                className="flex items-center mb-2 text-white mx-4"
+                onClick={toggleMenu}
+              >
+                <FiHome className="w-6 h-6 mr-2" />
+                Home
+              </button>
+            </Link>
+            <Link href="/add">
+              <button
+                className="flex items-center mb-2 text-white mx-4"
+                onClick={toggleMenu}
+              >
+                <FiTool className="w-6 h-6 mr-2" />
+                Manage
+              </button>
+            </Link>
+            <Link href="/bookings">
+              <button
+                className="flex items-center mb-2 text-white mx-4"
+                onClick={toggleMenu}
+              >
+                <FiBook className="w-6 h-6 mr-2" />
+                Bookings
+              </button>
+            </Link>
+            <button
+              className="flex items-center text-white mx-4"
+              onClick={() => supabase.auth.signOut()}
+            >
+              <FiLogOut className="w-6 h-6 mr-2" />
+              Sign Out
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

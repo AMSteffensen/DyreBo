@@ -14,6 +14,8 @@ Before running the project locally, make sure you have the following installed:
 
 - Node.js: v14 or higher
 - npm: v7 or higher
+- [Make](https://www.gnu.org/software/make/)
+- [Vercel CLI](https://vercel.com/docs/cli)
 
 ## Getting Started
 
@@ -35,6 +37,29 @@ npm install``
 
 
 5. Open your browser and visit `http://localhost:3000` to see the app.
+
+# Development
+
+## Clean build and lint the code
+``make clean``
+This command will remove any previously built artifacts and clean the project directory.
+
+## Deploying the Project
+To deploy the project to Vercel, follow these steps:
+
+``vercel login``
+
+Set the necessary permissions for the deployment scripts by running the following commands:
+```
+chmod +x deploy.sh
+chmod +x makefile
+```
+
+Authenticate with your Vercel account by running the following command:
+
+``make deploy``
+
+
 
 ## Branching Strategy
 
