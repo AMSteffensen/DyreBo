@@ -18,11 +18,11 @@ const Header = () => {
   const session = useSession();
 
   return (
-    <header className="bg-gray-800 py-4">
+    <header className="bg-gray-800 ">
       <nav className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <Link href="/places">
-            <div className="flex items-center text-white">
+            <div className="flex items-center text-white m-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

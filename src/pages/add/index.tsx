@@ -1,23 +1,25 @@
+import { useState } from "react";
 import { useRouter } from "next/router";
 import supabase from "../../lib/supabase";
-
 import { Formik, Form, Field, ErrorMessage } from "formik";
-
-function generateUUID() {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
+import axios from "axios";
+import generateUUID from "../../utils/generate";
+import useGeolocation from "../../lib/geolocation";
 
 const AddPlaceForm = () => {
   const router = useRouter();
+  const [countrySuggestions, setCountrySuggestions] = useState<string[]>([]);
+  const [address, setAddress] = useState<string[]>([]);
+  const location = useGeolocation();
 
   const handleSubmit = async (values: any) => {
     try {
       // Insert new place into the "places" table
-      const { data, error } = await supabase.from("places").insert([values]);
+      const { data, error } = await supabase
+        .from("places")
+        .insert([
+          { ...values, latitude: values.latitude, longitude: values.longitude },
+        ]);
 
       if (error) {
         throw new Error(error.message);
@@ -29,9 +31,37 @@ const AddPlaceForm = () => {
       console.error("Error adding place:", error);
     }
   };
+  const handleDetectAddress = async (setFieldValue) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          const apiKey = process.env.NEXT_PUBLIC_OPENCAGE_API_KEY;
+          const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}`;
+          try {
+            const response = await axios.get(url);
+            const address =
+              response.data.results[0].formatted ||
+              "Address not found for the given coordinates";
+            setAddress(address);
+            setFieldValue("address", address);
+            setFieldValue("latitude", latitude);
+            setFieldValue("longitude", longitude);
+          } catch (error) {
+            console.error("Error getting address:", error);
+          }
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  };
 
   return (
-    <div>
+    <div className="max-w-md mx-auto mt-8">
       <h1 className="mb-4 text-2xl font-bold">Add New Place</h1>
       <Formik
         initialValues={{
@@ -40,10 +70,12 @@ const AddPlaceForm = () => {
           title: "Cozy Apartment",
           description: "A cozy apartment with beautiful views.",
           price: 0,
-          address: "123 Main St",
-          city: "Cityville",
-          state: "Stateville",
-          country: "Countryland",
+          address: "",
+          latitude: "",
+          longitude: "",
+          city: "",
+          state: "",
+          country: "",
           created_at: "2023-05-20 12:50:33.483965+00",
           category_id: 1,
           images: [
@@ -54,25 +86,40 @@ const AddPlaceForm = () => {
         }}
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, setFieldValue }) => (
           <Form className="space-y-4">
-            <FormField label="ID" name="id" type="text" />
-            <FormField label="User ID" name="user_id" type="text" />
             <FormField label="Title" name="title" type="text" />
             <FormField label="Description" name="description" type="text" />
             <FormField label="Price" name="price" type="number" />
-            <FormField label="Address" name="address" type="text" />
-            <FormField label="City" name="city" type="text" />
-            <FormField label="State" name="state" type="text" />
-            <FormField label="Country" name="country" type="text" />
-            <FormField label="Created At" name="created_at" type="text" />
-            <FormField label="Category ID" name="category_id" type="number" />
+            <div>
+              <label htmlFor="address" className="text-lg font-medium">
+                Address
+              </label>
+              <Field
+                type="text"
+                id="address"
+                name="address"
+                className="w-full px-3 py-2 mt-1 border rounded border-gray-300 focus:outline-none focus:border-blue-500"
+              />
+              <ErrorMessage
+                name="address"
+                component="div"
+                className="mt-1 text-red-500"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => handleDetectAddress(setFieldValue)}
+              className="w-full py-2 px-4 rounded bg-blue-500 text-white font-bold hover:bg-blue-700"
+            >
+              Detect Address
+            </button>
             <FormField label="Images" name="images" type="text" />
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+              className="w-full py-2 px-4 rounded bg-blue-500 text-white font-bold hover:bg-blue-700"
             >
               Add Place
             </button>
@@ -100,7 +147,7 @@ const FormField = ({
       type={type}
       id={name}
       name={name}
-      className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
+      className="w-full px-3 py-2 mt-1 border rounded border-gray-300 focus:outline-none focus:border-blue-500"
     />
     <ErrorMessage name={name} component="div" className="mt-1 text-red-500" />
   </div>
